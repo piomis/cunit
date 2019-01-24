@@ -23,6 +23,8 @@
 #include <string.h>
 
 #include "Automated.h"
+#include "Report_CUnit.h"
+#include "Report_JUnit.h"
 #include "ExampleTests.h"
 
 int main(int argc, char* argv[])
@@ -58,17 +60,31 @@ int main(int argc, char* argv[])
   }
   else {
     Run = CU_TRUE;
-    CU_set_error_action(CUEA_IGNORE);
+    CU_set_error_action(CUEA_FAIL);
   }
 
   if (CU_TRUE == Run) {
+    /* Run with CUnit report output */
     if (CU_initialize_registry()) {
       printf("\nInitialization of Test Registry failed.");
     }
     else {
       AddTests();
-      CU_set_output_filename("TestAutomated");
+      CU_automated_set_report_format(CU_REPORT_FORMAT_CUNIT);
+      CU_set_output_filename("TestAutomated_CUnit");
       CU_list_tests_to_file();
+      CU_automated_run_tests();
+      CU_cleanup_registry();
+    }
+
+    /* Run with JUnit report output */
+    if (CU_initialize_registry()) {
+      printf("\nInitialization of Test Registry failed.");
+    }
+    else {
+      AddTests();
+      CU_automated_set_report_format(CU_REPORT_FORMAT_JUNIT);
+      CU_set_output_filename("TestAutomated_JUnit");
       CU_automated_run_tests();
       CU_cleanup_registry();
     }
