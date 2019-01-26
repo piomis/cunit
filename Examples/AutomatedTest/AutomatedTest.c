@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
   }
   else {
     Run = CU_TRUE;
-    CU_set_error_action(CUEA_FAIL);
+    CU_set_error_action(CUEA_IGNORE);
   }
 
   if (CU_TRUE == Run) {

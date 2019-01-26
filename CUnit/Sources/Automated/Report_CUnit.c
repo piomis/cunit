@@ -62,6 +62,7 @@ CU_reportFormat_T CU_reportFormat_CUnit =
   CU_report_CUnit_all_tests_complete_msg_handler,       /* pAllTestsCompleteMsgHandler */
   CU_report_CUnit_suite_init_failure_msg_handler,       /* pSuiteInitFailureMsgHandler */
   CU_report_CUnit_suite_cleanup_failure_msg_handler,    /* pSuiteCleanupFailureMsgHandler */
+  NULL,                                                 /* pSuiteCompleteMsgHandler */
   CU_report_CUnit_list_all_tests                        /* pListAllTests */
 };
 

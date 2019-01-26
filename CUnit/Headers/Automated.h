@@ -56,6 +56,7 @@ typedef void (*CU_report_test_complete_msg_handler_T)(const CU_pTest, const CU_p
 typedef void (*CU_report_all_tests_complete_msg_handler_T)(const CU_pFailureRecord);
 typedef void (*CU_report_suite_init_failure_msg_handler_T)(const CU_pSuite);
 typedef void (*CU_report_suite_cleanup_failure_msg_handler_T)(const CU_pSuite);
+typedef void (*CU_report_suite_complete_msg_handler_T)(const CU_pSuite, const CU_pFailureRecord);
 typedef CU_ErrorCode (*CU_report_list_all_tests_T)(CU_pTestRegistry);
 /**<
  *  Types for each interface functions of report.
@@ -71,6 +72,7 @@ typedef struct CU_reportFormat_Tag
   CU_report_all_tests_complete_msg_handler_T pAllTestsCompleteMsgHandler;
   CU_report_suite_init_failure_msg_handler_T pSuiteInitFailureMsgHandler;
   CU_report_suite_cleanup_failure_msg_handler_T pSuiteCleanupFailureMsgHandler;
+  CU_report_suite_complete_msg_handler_T pSuiteCompleteMsgHandler;
   CU_report_list_all_tests_T pListAllTests;
 } CU_reportFormat_T;
 typedef CU_reportFormat_T* CU_pReportFormat_T;

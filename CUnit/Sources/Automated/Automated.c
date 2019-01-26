@@ -99,12 +99,6 @@ void CU_automated_run_tests(void)
   assert(NULL != pReport);
   assert(NULL != pReport->pOpenReport);
   assert(NULL != pReport->pCloseReport);
-  assert(NULL != pReport->pTestStartMsgHandler);
-  assert(NULL != pReport->pTestCompleteMsgHandler);
-  assert(NULL != pReport->pAllTestsCompleteMsgHandler);
-  assert(NULL != pReport->pSuiteInitFailureMsgHandler);
-  assert(NULL != pReport->pSuiteCleanupFailureMsgHandler);
-
 
   /* Ensure output makes it to screen at the moment of a SIGSEGV. */
   setvbuf(stdout, NULL, _IONBF, 0);
@@ -120,6 +114,7 @@ void CU_automated_run_tests(void)
     CU_set_all_test_complete_handler(pReport->pAllTestsCompleteMsgHandler);
     CU_set_suite_init_failure_handler(pReport->pSuiteInitFailureMsgHandler);
     CU_set_suite_cleanup_failure_handler(pReport->pSuiteCleanupFailureMsgHandler);
+    CU_set_suite_complete_handler(pReport->pSuiteCompleteMsgHandler);
 
     automated_run_all_tests(NULL);
 

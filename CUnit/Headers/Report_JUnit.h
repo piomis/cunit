@@ -49,12 +49,8 @@ extern CU_reportFormat_T CU_reportFormat_JUnit;
 extern void CU_report_JUnit_set_output_filename(const char* szFilename);
 extern CU_ErrorCode CU_report_JUnit_open_report(void);
 extern CU_ErrorCode CU_report_JUnit_close_report(void);
-extern void CU_report_JUnit_test_start_msg_handler(const CU_pTest pTest, const CU_pSuite pSuite);
-extern void CU_report_JUnit_test_complete_msg_handler(const CU_pTest pTest, const CU_pSuite pSuite, const CU_pFailureRecord pFailure);
 extern void CU_report_JUnit_all_tests_complete_msg_handler(const CU_pFailureRecord pFailure);
-extern void CU_report_JUnit_suite_init_failure_msg_handler(const CU_pSuite pSuite);
-extern void CU_report_JUnit_suite_cleanup_failure_msg_handler(const CU_pSuite pSuite);
-
+extern void CU_report_JUnit_suite_complete_msg_handler(const CU_pSuite pSuite, const CU_pFailureRecord pFailure);
 #ifdef __cplusplus
 }
 #endif

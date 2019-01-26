@@ -57,11 +57,12 @@ CU_reportFormat_T CU_reportFormat_JUnit =
   CU_report_JUnit_set_output_filename,                  /* pSetOutputFilename */
   CU_report_JUnit_open_report,                          /* pOpenReport */
   CU_report_JUnit_close_report,                         /* pCloseReport */
-  CU_report_JUnit_test_start_msg_handler,               /* pTestStartMsgHandler */
-  CU_report_JUnit_test_complete_msg_handler,            /* pTestCompleteMsgHandler */
+  NULL,                                                 /* pTestStartMsgHandler */
+  NULL,                                                 /* pTestCompleteMsgHandler */
   CU_report_JUnit_all_tests_complete_msg_handler,       /* pAllTestsCompleteMsgHandler */
-  CU_report_JUnit_suite_init_failure_msg_handler,       /* pSuiteInitFailureMsgHandler */
-  CU_report_JUnit_suite_cleanup_failure_msg_handler,    /* pSuiteCleanupFailureMsgHandler */
+  NULL,                                                 /* pSuiteInitFailureMsgHandler */
+  NULL,                                                 /* pSuiteCleanupFailureMsgHandler */
+  CU_report_JUnit_suite_complete_msg_handler,           /* pSuiteCompleteMsgHandler */
   NULL                                                  /* pListAllTests - not supported by JUnit format */
 };
 
@@ -74,6 +75,15 @@ static char      f_szTestListFileName[MAX_FILENAME_LENGTH] = "";   /**< Current 
 static char      f_szTestResultFileName[MAX_FILENAME_LENGTH] = ""; /**< Current output file name for the test results file. */
 static FILE*     f_pTestResultFile = NULL;                  /**< FILE pointer the test results file. */
 static CU_BOOL f_bWriting_CUNIT_RUN_SUITE = CU_FALSE;       /**< Flag for keeping track of when a closing xml tag is required. */
+
+static void CU_report_JUnit_print_single_test_success(const CU_pTest pTest);
+static void CU_report_JUnit_print_single_test_error(const CU_pTest pTest);
+static void CU_report_JUnit_print_single_test_skipped(const CU_pTest pTest);
+static CU_pFailureRecord CU_report_JUnit_print_single_test_failed(const CU_pTest pTest, const CU_pFailureRecord pFailure);
+static void CU_report_JUnit_print_testcase_tag(const CU_pTest pTest, const CU_BOOL hasSubTags);
+static void CU_report_JUnit_print_dummy_test(const char* sSuiteName, const CU_pFailureRecord pFailure);
+static void CU_report_JUnit_print_failure_details(CU_pFailureRecord pFailure);
+static void CU_report_JUnit_get_failure_msg(char* strCondition, char ** pOutputBuffer);
 
 /*=================================================================
 *  Public Interface functions
@@ -156,156 +166,6 @@ CU_ErrorCode CU_report_JUnit_close_report(void)
 }
 
 /*------------------------------------------------------------------------*/
-/** Handler function called at start of each test.
- *  The test result file must have been opened before this
- *  function is called (i.e. f_pTestResultFile non-NULL).
- *  @param pTest  The test being run (non-NULL).
- *  @param pSuite The suite containing the test (non-NULL).
- */
-void CU_report_JUnit_test_start_msg_handler(const CU_pTest pTest, const CU_pSuite pSuite)
-{
-  char *szTempName = NULL;
-  size_t szTempName_len = 0;
-
-  CU_UNREFERENCED_PARAMETER(pTest);   /* not currently used */
-
-  assert(NULL != pTest);
-  assert(NULL != pSuite);
-  assert(NULL != pSuite->pName);
-  assert(NULL != f_pTestResultFile);
-
-  /* write suite close/open tags if this is the 1st test for this szSuite */
-  if ((NULL == f_pRunningSuite) || (f_pRunningSuite != pSuite)) {
-    if (CU_TRUE == f_bWriting_CUNIT_RUN_SUITE) {
-      fprintf(f_pTestResultFile,
-        "    </testsuite>\n");
-      }
-
-    /* translate suite name that may contain XML control characters */
-    szTempName = (char *)CU_MALLOC((szTempName_len = CU_translated_strlen(pSuite->pName) + 1));
-    CU_translate_special_characters(pSuite->pName, szTempName, szTempName_len);
-
-    fprintf(f_pTestResultFile,
-      "  <testsuite errors=\"%d\" failures=\"%d\" tests=\"%d\" name=\"%s\"> \n",
-      0, /* Errors */
-      pSuite->uiNumberOfTestsFailed, /* Failures */
-      pSuite->uiNumberOfTests, /* Tests */
-      (NULL != szTempName) ? szTempName : ""); /* Name */
-
-    f_bWriting_CUNIT_RUN_SUITE = CU_TRUE;
-    f_pRunningSuite = pSuite;
-  }
-
-  if (NULL != szTempName) {
-    CU_FREE(szTempName);
-  }
-}
-
-/*------------------------------------------------------------------------*/
-/** Handler function called at completion of each test.
- * @param pTest   The test being run (non-NULL).
- * @param pSuite  The suite containing the test (non-NULL).
- * @param pFailure Pointer to the 1st failure record for this test.
- */
-void CU_report_JUnit_test_complete_msg_handler(const CU_pTest pTest, const CU_pSuite pSuite, const CU_pFailureRecord pFailure)
-{
-  char *szTemp = NULL;
-  size_t szTemp_len = 0;
-  size_t cur_len = 0;
-  CU_pFailureRecord pTempFailure = pFailure;
-  const char *pPackageName = CU_automated_package_name_get();
-
-  CU_UNREFERENCED_PARAMETER(pSuite);  /* pSuite is not used except in assertion */
-
-  assert(NULL != pTest);
-  assert(NULL != pTest->pName);
-  assert(NULL != pSuite);
-  assert(NULL != pSuite->pName);
-  assert(NULL != f_pTestResultFile);
-
-  if (NULL != pTempFailure) {
-
-    assert((NULL != pTempFailure->pSuite) && (pTempFailure->pSuite == pSuite));
-    assert((NULL != pTempFailure->pTest) && (pTempFailure->pTest == pTest));
-
-    if (NULL != pTempFailure->strCondition) {
-      szTemp = (char *)CU_MALLOC((szTemp_len = CU_translated_strlen(pSuite->pName) + 1));
-      CU_translate_special_characters(pTempFailure->strCondition, szTemp, sizeof(szTemp));
-    }
-    else {
-      szTemp[0] = '\0';
-    }
-
-    fprintf(f_pTestResultFile, "        <testcase classname=\"%s.%s\" name=\"%s\" time=\"0\">\n",
-      pPackageName,
-      pSuite->pName,
-      (NULL != pTest->pName) ? pTest->pName : "");
-
-    switch (pTempFailure->type)
-    {
-      case CUF_TestInactive:
-      {
-        fprintf(f_pTestResultFile, "            <skipped/>\n");
-        break;
-      }
-      case CUF_AssertFailed:
-      {
-        fprintf(f_pTestResultFile, "            <failure message=\"%s\" type=\"Failure\">\n", szTemp);
-
-        while (NULL != pTempFailure) {
-
-          assert((NULL != pTempFailure->pSuite) && (pTempFailure->pSuite == pSuite));
-          assert((NULL != pTempFailure->pTest) && (pTempFailure->pTest == pTest));
-
-          /* expand temporary char buffer if need more room */
-          if (NULL != pTempFailure->strCondition) {
-            cur_len = CU_translated_strlen(pTempFailure->strCondition) + 1;
-          }
-          else {
-            cur_len = 1;
-          }
-          if (cur_len > szTemp_len) {
-            szTemp_len = cur_len;
-            if (NULL != szTemp) {
-              CU_FREE(szTemp);
-            }
-            szTemp = (char *)CU_MALLOC(szTemp_len);
-          }
-
-          /* convert xml entities in strCondition (if present) */
-          if (NULL != pTempFailure->strCondition) {
-            CU_translate_special_characters(pTempFailure->strCondition, szTemp, szTemp_len);
-          }
-          else {
-            szTemp[0] = '\0';
-          }
-
-          fprintf(f_pTestResultFile, "                     Condition: %s\n", szTemp);
-          fprintf(f_pTestResultFile, "                     File     : %s\n", (NULL != pTempFailure->strFileName) ? pTempFailure->strFileName : "");
-          fprintf(f_pTestResultFile, "                     Line     : %d\n", pTempFailure->uiLineNumber);
-
-          pTempFailure = pTempFailure->pNext;
-        } /* while */
-
-        fprintf(f_pTestResultFile, "            </failure>\n");
-      }
-    }
-    fprintf(f_pTestResultFile, "        </testcase>\n");
-
-  }
-  else {
-    fprintf(f_pTestResultFile, "        <testcase classname=\"%s.%s\" name=\"%s\" time=\"0\"/>\n",
-      pPackageName,
-      pSuite->pName,
-      (NULL != pTest->pName) ? pTest->pName : "");
-  }
-
-  if (NULL != szTemp) {
-    CU_FREE(szTemp);
-  }
-}
-
-/*------------------------------------------------------------------------*/
 /** Handler function called at completion of all tests.
  *  @param pFailure Pointer to the test failure record list.
  */
@@ -320,54 +180,274 @@ void CU_report_JUnit_all_tests_complete_msg_handler(const CU_pFailureRecord pFai
   assert(NULL != pRunSummary);
   assert(NULL != f_pTestResultFile);
 
-  fprintf(f_pTestResultFile, "</testsuite></testsuites>");
+  fprintf(f_pTestResultFile, "</testsuites>");
 }
 
 /*------------------------------------------------------------------------*/
-/** Handler function called when suite initialization fails.
- *  @param pSuite The suite for which initialization failed.
+/** Handler function called when suite is completed.
+ *  @param pSuite The suite which has completed
+ *  @param pFailure Pointer to the test failure record list.
  */
-void CU_report_JUnit_suite_init_failure_msg_handler(const CU_pSuite pSuite)
+void CU_report_JUnit_suite_complete_msg_handler(const CU_pSuite pSuite, const CU_pFailureRecord pFailure)
 {
+  char *szTempName = NULL;
+  size_t szTempName_len = 0;
+  CU_pTest pTest;
+  CU_pFailureRecord pCurrFailure;
+
   assert(NULL != pSuite);
   assert(NULL != pSuite->pName);
   assert(NULL != f_pTestResultFile);
 
-  if (CU_TRUE == f_bWriting_CUNIT_RUN_SUITE) {
-    f_bWriting_CUNIT_RUN_SUITE = CU_FALSE;
-    fprintf(f_pTestResultFile,
-      "    </testsuite>\n");
-  }
-}
+  /* translate suite name that may contain XML control characters */
+  szTempName = (char *)CU_MALLOC((szTempName_len = CU_translated_strlen(pSuite->pName) + 1));
+  CU_translate_special_characters(pSuite->pName, szTempName, szTempName_len);
 
-/*------------------------------------------------------------------------*/
-/** Handler function called when suite cleanup fails.
- *  @param pSuite The suite for which cleanup failed.
- */
-void CU_report_JUnit_suite_cleanup_failure_msg_handler(const CU_pSuite pSuite)
-{
-  assert(NULL != pSuite);
-  assert(NULL != pSuite->pName);
-  assert(NULL != f_pTestResultFile);
-
-  if (CU_TRUE == f_bWriting_CUNIT_RUN_SUITE) {
-    f_bWriting_CUNIT_RUN_SUITE = CU_FALSE;
-    fprintf(f_pTestResultFile,
-      "    </testsuite>\n");
-  }
-
+  /* Print suite open tag */
   fprintf(f_pTestResultFile,
-    "    <testsuite name=\"Suite Cleanup\"> \n"
-    "        <testcase name=\"%s\" result=\"failure\"> \n"
-    "            <error> \"Cleanup of suite failed.\" </error> \n"
-    "          <variation name=\"error\"> \n"
-    "            <severity>fail</severity> \n"
-    "            <description> \"Cleanup of suite failed.\" </description> \n"
-    "            <resource> SuiteCleanup </resource> \n"
-    "          </variation> \n"
-    "       </testcase> \n"
-    "    </testsuite>\n",
-    (NULL != pSuite->pName) ? pSuite->pName : "");
+    /*"  <testsuite errors=\"%d\" failures=\"%d\" tests=\"%d\" name=\"%s\"> \n",*/
+    "  <testsuite tests=\"%d\" name=\"%s\"> \n",
+    //0, /* Errors */
+    //pSuite->uiNumberOfTestsFailed, /* Failures */
+    pSuite->uiNumberOfTests, /* Tests */
+    (NULL != szTempName) ? szTempName : ""); /* Name */
+
+  if (pFailure != NULL)
+  {
+    pCurrFailure = pFailure;
+
+    /* Check if first failure is a Suite Init failure */
+    if (CUF_SuiteInitFailed == pCurrFailure->type)
+    {
+      /* Add failed dummy test case */
+      CU_report_JUnit_print_dummy_test(szTempName, pCurrFailure);
+
+      pCurrFailure = pCurrFailure->pNext;
+
+      /* Print all tests in suite as "errored" */
+      pTest = pSuite->pTest;
+      while (pTest != NULL)
+      {
+        CU_report_JUnit_print_single_test_error(pTest);
+        pTest = pTest->pNext;
+      }
+    }
+    else /**/
+    {
+      pTest = pSuite->pTest;
+      while (pTest != NULL)
+      {
+        /* Check if there are any failure records for given test. */
+        if ((pCurrFailure != NULL) && (pCurrFailure->pTest == pTest))
+        {
+          if (CUF_TestInactive == pCurrFailure->type)
+          {
+            CU_report_JUnit_print_single_test_skipped(pTest);
+          }
+          else
+          {
+            pCurrFailure = CU_report_JUnit_print_single_test_failed(pTest, pCurrFailure);
+          }
+        }
+        else
+        {
+          CU_report_JUnit_print_single_test_success(pTest);
+        }
+        pTest = pTest->pNext;
+      }
+
+      if ((pCurrFailure != NULL) && (CUF_SuiteCleanupFailed == pCurrFailure->type))
+      {
+        /* Add failed dummy test case */
+        CU_report_JUnit_print_dummy_test(szTempName, pCurrFailure);
+      }
+    }
+  }
+  else /* No failure record - all tests & init/cleanup of suite passed */
+  {
+    pTest = pSuite->pTest;
+    while (pTest != NULL)
+    {
+      CU_report_JUnit_print_single_test_success(pTest);
+      pTest = pTest->pNext;
+    }
+  }
+
+  /* Print suite close tag. */
+  fprintf(f_pTestResultFile,
+    "  </testsuite>\n");
+
+  if (NULL != szTempName) {
+    CU_FREE(szTempName);
+  }
 }
 
+/*------------------------------------------------------------------------*/
+/** Function prints single success test entry in report
+ *  @param pTest Test to print
+ */
+static void CU_report_JUnit_print_single_test_success(const CU_pTest pTest)
+{
+  CU_report_JUnit_print_testcase_tag(pTest, CU_FALSE);
+}
+
+/*------------------------------------------------------------------------*/
+/** Function prints single error test entry in report
+ *  @param pTest Test to print
+ */
+static void CU_report_JUnit_print_single_test_error(const CU_pTest pTest)
+{
+  CU_report_JUnit_print_testcase_tag(pTest, CU_TRUE);
+
+  fprintf(f_pTestResultFile, "      <error message=\"Suite initialization failed\"/>\n");
+
+  fprintf(f_pTestResultFile, "    </testcase>\n");
+}
+
+/*------------------------------------------------------------------------*/
+/** Function prints single skipped test entry in report
+ *  @param pTest Test to print
+ */
+static void CU_report_JUnit_print_single_test_skipped(const CU_pTest pTest)
+{
+  CU_report_JUnit_print_testcase_tag(pTest, CU_TRUE);
+
+  fprintf(f_pTestResultFile, "      <skipped/>\n");
+
+  fprintf(f_pTestResultFile, "    </testcase>\n");
+}
+
+/*------------------------------------------------------------------------*/
+/** Function prints single failed test entry in report
+ *  @param pTest Test to print
+ *  @param pFailure First failure of test
+ *  @returns CU_pFailureRecord failure entry of next test or null
+ */
+static CU_pFailureRecord CU_report_JUnit_print_single_test_failed(const CU_pTest pTest, const CU_pFailureRecord pFailure)
+{
+  char * szTemp = NULL;
+
+  CU_pFailureRecord pTempFailure = pFailure;
+
+  CU_report_JUnit_print_testcase_tag(pTest, CU_TRUE);
+
+  CU_report_JUnit_get_failure_msg(pFailure->strCondition, &szTemp);
+  fprintf(f_pTestResultFile, "      <failure message=\"%s\" type=\"Failure\">\n", szTemp);
+  if (NULL != szTemp)
+  {
+    CU_FREE(szTemp);
+  }
+
+  while (NULL != pTempFailure && (pTempFailure->pTest == pTest))
+  {
+    CU_report_JUnit_print_failure_details(pTempFailure);
+
+    pTempFailure = pTempFailure->pNext;
+  } /* while */
+
+  fprintf(f_pTestResultFile, "      </failure>\n");
+
+  fprintf(f_pTestResultFile, "    </testcase>\n");
+
+  return pTempFailure;
+}
+
+/*------------------------------------------------------------------------*/
+/** Function prints single test tag
+ *  @param pTest Test to print
+ *  @param hasSubTags Flag to indicate if test case tag will contain sub-tags (like <error> or <failure>)
+ */
+static void CU_report_JUnit_print_testcase_tag(const CU_pTest pTest, const CU_BOOL hasSubTags)
+{
+  const char *pPackageName = CU_automated_package_name_get();
+
+  /* Test tag */
+  fprintf(f_pTestResultFile, "    <testcase classname=\"%s.%s\" name=\"%s\" time=\"0\"%s>\n",
+    pPackageName,
+    "",
+    (NULL != pTest->pName) ? pTest->pName : "",
+    (CU_TRUE == hasSubTags) ? "" : "/");
+  }
+
+/*------------------------------------------------------------------------*/
+/** Function prints dummy test tag for failed test suite init/cleanup
+ *  @param pSuite Suite for which initialization/cleanup failed
+ *  @param pFailure Failure record
+ */
+static void CU_report_JUnit_print_dummy_test(const char* sSuiteName, const CU_pFailureRecord pFailure)
+{
+  const char *pPackageName = CU_automated_package_name_get();
+
+  assert(NULL != sSuiteName);
+  assert(NULL != pFailure);
+
+  if (CUF_SuiteInitFailed == pFailure->type)
+  {
+    fprintf(f_pTestResultFile, "    <testcase classname=\"%s.%s\" name=\"%s - Initialization\" time=\"0\">\n"
+        "      <failure message=\"Suite Initialization failed\" type=\"Failure\">\n",
+      pPackageName,
+      "",
+      sSuiteName);
+  }
+  else
+  {
+    fprintf(f_pTestResultFile, "    <testcase classname=\"%s.%s\" name=\"%s - Cleanup\" time=\"0\">\n"
+        "      <failure message=\"Suite Cleanup failed\" type=\"Failure\">\n",
+      pPackageName,
+      "",
+      sSuiteName);
+  }
+
+  CU_report_JUnit_print_failure_details(pFailure);
+
+  fprintf(f_pTestResultFile, "      </failure>\n"
+    "    </testcase>\n");
+}
+
+/*------------------------------------------------------------------------*/
+/** Function printf formated failure details
+ *  @param pFailure Failure record
+ */
+static void CU_report_JUnit_print_failure_details(CU_pFailureRecord pFailure)
+{
+  char * szTemp = NULL;
+
+  CU_report_JUnit_get_failure_msg(pFailure->strCondition, &szTemp);
+
+  fprintf(f_pTestResultFile, "        Condition: %s\n", szTemp);
+  fprintf(f_pTestResultFile, "        File     : %s\n", (NULL != pFailure->strFileName) ? pFailure->strFileName : "");
+  fprintf(f_pTestResultFile, "        Line     : %d\n", pFailure->uiLineNumber);
+
+  if (NULL != szTemp)
+  {
+    CU_FREE(szTemp);
+  }
+}
+
+static void CU_report_JUnit_get_failure_msg(char* strCondition, char ** pOutputBuffer)
+{
+  size_t cur_len;
+
+  /* expand temporary char buffer if need more room */
+  if (NULL != strCondition) {
+    cur_len = CU_translated_strlen(strCondition) + 1;
+  }
+  else {
+    cur_len = 1;
+  }
+
+  if (NULL != *pOutputBuffer)
+  {
+    CU_FREE(*pOutputBuffer);
+  }
+  *pOutputBuffer = (char *)CU_MALLOC(cur_len);
+
+  /* convert xml entities in strCondition (if present) */
+  if (NULL != strCondition) {
+    CU_translate_special_characters(strCondition, *pOutputBuffer, cur_len);
+  }
+  else {
+    (*pOutputBuffer)[0] = '\0';
+  }
+}
    /** @} */
