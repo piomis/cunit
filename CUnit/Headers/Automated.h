@@ -2,6 +2,7 @@
  *  CUnit - A Unit testing framework library for C.
  *  Copyright (C) 2001       Anil Kumar
  *  Copyright (C) 2004-2006  Anil Kumar, Jerry St.Clair
+ *  Copyright (C) 2019       Piotr Mis
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -26,6 +27,8 @@
  *  13-Feb-2002   Single interface to automated_run_tests. (AK)
  *
  *  20-Jul-2004   New interface, doxygen comments. (JDS)
+ *
+ *  24-Jan-2019   Added common interface for different reports formats.  (PMi)
  */
 
 /** @file
@@ -44,6 +47,38 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef void (*CU_report_set_output_filename_T)(const char*);
+typedef CU_ErrorCode (*CU_report_open_report_T)(void);
+typedef CU_ErrorCode(*CU_report_close_report_T)(void);
+typedef void (*CU_report_test_start_msg_handler_T)(const CU_pTest, const CU_pSuite);
+typedef void (*CU_report_test_complete_msg_handler_T)(const CU_pTest, const CU_pSuite, const CU_pFailureRecord);
+typedef void (*CU_report_all_tests_complete_msg_handler_T)(const CU_pFailureRecord);
+typedef void (*CU_report_suite_init_failure_msg_handler_T)(const CU_pSuite);
+typedef void (*CU_report_suite_cleanup_failure_msg_handler_T)(const CU_pSuite);
+typedef void (*CU_report_suite_complete_msg_handler_T)(const CU_pSuite, const CU_pFailureRecord);
+typedef CU_ErrorCode (*CU_report_list_all_tests_T)(CU_pTestRegistry);
+/**<
+ *  Types for each interface functions of report.
+ */
+
+typedef struct CU_reportFormat_Tag
+{
+  CU_report_set_output_filename_T pSetOutputFilename;
+  CU_report_open_report_T pOpenReport;
+  CU_report_close_report_T pCloseReport;
+  CU_report_test_start_msg_handler_T pTestStartMsgHandler;
+  CU_report_test_complete_msg_handler_T pTestCompleteMsgHandler;
+  CU_report_all_tests_complete_msg_handler_T pAllTestsCompleteMsgHandler;
+  CU_report_suite_init_failure_msg_handler_T pSuiteInitFailureMsgHandler;
+  CU_report_suite_cleanup_failure_msg_handler_T pSuiteCleanupFailureMsgHandler;
+  CU_report_suite_complete_msg_handler_T pSuiteCompleteMsgHandler;
+  CU_report_list_all_tests_T pListAllTests;
+} CU_reportFormat_T;
+typedef CU_reportFormat_T* CU_pReportFormat_T;
+/**<
+ *  Type for structure with interface of report.
+ */
 
 CU_EXPORT void CU_automated_run_tests(void);
 /**<
@@ -83,12 +118,14 @@ CU_EXPORT void CU_set_output_filename(const char* szFilenameRoot);
 #define set_output_filename(x) CU_set_output_filename((x))
 #endif  /* USE_DEPRECATED_CUNIT_NAMES */
 
-void CU_automated_enable_junit_xml(CU_BOOL bFlag);
+CU_EXPORT void CU_automated_package_name_set(const char *pName);
 
-void CU_automated_package_name_set(const char *pName);
+CU_EXPORT const char *CU_automated_package_name_get();
 
-const char *CU_automated_package_name_get();
-
+CU_EXPORT void CU_automated_set_report_format(CU_pReportFormat_T pReportFormat);
+/**<
+ *  Selects specific report formatter.
+ */
 #ifdef __cplusplus
 }
 #endif

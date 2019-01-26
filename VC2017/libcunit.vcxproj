@@ -211,6 +211,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\CUnit\Sources\Automated\Automated.c" />
+    <ClCompile Include="..\CUnit\Sources\Automated\Report_CUnit.c" />
+    <ClCompile Include="..\CUnit\Sources\Automated\Report_JUnit.c" />
     <ClCompile Include="..\CUnit\Sources\Basic\Basic.c" />
     <ClCompile Include="..\CUnit\Sources\Console\Console.c" />
     <ClCompile Include="..\CUnit\Sources\Curses\Curses.c">
@@ -239,6 +241,8 @@
     <ClInclude Include="..\CUnit\Headers\CUnit.h" />
     <ClInclude Include="..\CUnit\Headers\CUnit_intl.h" />
     <ClInclude Include="..\CUnit\Headers\MyMem.h" />
+    <ClInclude Include="..\CUnit\Headers\Report_CUnit.h" />
+    <ClInclude Include="..\CUnit\Headers\Report_JUnit.h" />
     <ClInclude Include="..\CUnit\Headers\TestDB.h" />
     <ClInclude Include="..\CUnit\Headers\TestRun.h" />
     <ClInclude Include="..\CUnit\Headers\Util.h" />

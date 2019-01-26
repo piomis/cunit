@@ -45,6 +45,12 @@
     <ClCompile Include="..\CUnit\Sources\Framework\Util.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\CUnit\Sources\Automated\Report_CUnit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CUnit\Sources\Automated\Report_JUnit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\CUnit\Headers\Automated.h">
@@ -78,6 +84,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\CUnit\Headers\Util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CUnit\Headers\Report_CUnit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CUnit\Headers\Report_JUnit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

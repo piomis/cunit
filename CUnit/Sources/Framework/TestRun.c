@@ -846,6 +846,8 @@ static CU_ErrorCode run_single_suite(CU_pSuite pSuite, CU_pRunSummary pRunSummar
 
   f_pCurTest = NULL;
   f_pCurSuite = pSuite;
+  pSuite->uiNumberOfTestsFailed = 0;
+  pSuite->uiNumberOfTestsSuccess = 0;
 
   /* run handler for suite start, if any */
   if (NULL != f_pSuiteStartMessageHandler) {
@@ -887,10 +889,10 @@ static CU_ErrorCode run_single_suite(CU_pSuite pSuite, CU_pRunSummary pRunSummar
         pTest = pTest->pNext;
 
         if (CUE_SUCCESS == result) {
-          pSuite->uiNumberOfTestsFailed++;
+          pSuite->uiNumberOfTestsSuccess++;
         }
         else {
-          pSuite->uiNumberOfTestsSuccess++;
+          pSuite->uiNumberOfTestsFailed++;
         }
       }
       pRunSummary->nSuitesRun++;
