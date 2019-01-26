@@ -12,6 +12,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BasicTest", "BasicTest.vcxp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleTest", "ConsoleTest.vcxproj", "{C6339A24-F233-4D77-8087-0C97E73A81D7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CBasicTest", "CBasicTest.vcxproj", "{DD6A7B59-2A65-497C-9D5E-A1642C8B6E67}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug - DLL|Win32 = Debug - DLL|Win32
@@ -71,6 +73,16 @@ Global
 		{C6339A24-F233-4D77-8087-0C97E73A81D7}.Release - DLL|Win32.Build.0 = Release - DLL|Win32
 		{C6339A24-F233-4D77-8087-0C97E73A81D7}.Release - Static Lib|Win32.ActiveCfg = Release - Static Lib|Win32
 		{C6339A24-F233-4D77-8087-0C97E73A81D7}.Release - Static Lib|Win32.Build.0 = Release - Static Lib|Win32
+		{DD6A7B59-2A65-497C-9D5E-A1642C8B6E67}.Debug - DLL|Win32.ActiveCfg = Debug - DLL|Win32
+		{DD6A7B59-2A65-497C-9D5E-A1642C8B6E67}.Debug - DLL|Win32.Build.0 = Debug - DLL|Win32
+		{DD6A7B59-2A65-497C-9D5E-A1642C8B6E67}.Debug - Static Lib with MEMTRACE|Win32.ActiveCfg = Debug - Static Lib with MEMTRACE|Win32
+		{DD6A7B59-2A65-497C-9D5E-A1642C8B6E67}.Debug - Static Lib with MEMTRACE|Win32.Build.0 = Debug - Static Lib with MEMTRACE|Win32
+		{DD6A7B59-2A65-497C-9D5E-A1642C8B6E67}.Debug - Static Lib|Win32.ActiveCfg = Debug - Static Lib|Win32
+		{DD6A7B59-2A65-497C-9D5E-A1642C8B6E67}.Debug - Static Lib|Win32.Build.0 = Debug - Static Lib|Win32
+		{DD6A7B59-2A65-497C-9D5E-A1642C8B6E67}.Release - DLL|Win32.ActiveCfg = Release - DLL|Win32
+		{DD6A7B59-2A65-497C-9D5E-A1642C8B6E67}.Release - DLL|Win32.Build.0 = Release - DLL|Win32
+		{DD6A7B59-2A65-497C-9D5E-A1642C8B6E67}.Release - Static Lib|Win32.ActiveCfg = Release - Static Lib|Win32
+		{DD6A7B59-2A65-497C-9D5E-A1642C8B6E67}.Release - Static Lib|Win32.Build.0 = Release - Static Lib|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

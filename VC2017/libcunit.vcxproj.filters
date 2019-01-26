@@ -51,6 +51,9 @@
     <ClCompile Include="..\CUnit\Sources\Automated\Report_JUnit.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\CUnit\Sources\CBasic\CBasic.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\CUnit\Headers\Automated.h">
@@ -90,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\CUnit\Headers\Report_JUnit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CUnit\Headers\CBasic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
