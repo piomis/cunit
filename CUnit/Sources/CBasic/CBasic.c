@@ -305,9 +305,18 @@ static void cbasic_test_complete_message_handler(const CU_pTest pTest,
   else {
     switch (f_run_mode) {
       case CU_CBRM_VERBOSE:
-        CU_CBASIC_SET_COLOUR(CU_CBRM_FAIL_COLOUR);
-        fprintf(stdout, _("FAILED"));
-        CU_CBASIC_SET_COLOUR(CU_CBRM_NORMAL_COLOUR);
+        if (CUF_TestInactive == pFailure->type)
+        {
+          CU_CBASIC_SET_COLOUR(CU_CBRM_SKIP_COLOUR);
+          fprintf(stdout, _("SKIPPED"));
+          CU_CBASIC_SET_COLOUR(CU_CBRM_NORMAL_COLOUR);
+        }
+        else
+        {
+          CU_CBASIC_SET_COLOUR(CU_CBRM_FAIL_COLOUR);
+          fprintf(stdout, _("FAILED"));
+          CU_CBASIC_SET_COLOUR(CU_CBRM_NORMAL_COLOUR);
+        }
         break;
       case CU_CBRM_NORMAL:
         assert(NULL != pSuite->pName);
@@ -338,6 +347,20 @@ static void cbasic_all_tests_complete_message_handler(const CU_pFailureRecord pF
   printf("\n\n");
   CU_print_run_results(stdout);
   printf("\n");
+  fprintf(stdout, "\n Overall Result: ");
+  if ((pFailure != NULL))
+  {
+    CU_CBASIC_SET_COLOUR(CU_CBRM_FAIL_COLOUR);
+    fprintf(stdout, "FAILED ");
+    CU_CBASIC_SET_COLOUR(CU_CBRM_NORMAL_COLOUR);
+    fprintf(stdout, "(some tests failed, were skipped or there are problems with suites inits/cleanups)\n");
+  }
+  else
+  {
+    CU_CBASIC_SET_COLOUR(CU_CBRM_PASS_COLOUR);
+    fprintf(stdout, "PASSED\n");
+    CU_CBASIC_SET_COLOUR(CU_CBRM_NORMAL_COLOUR);
+  }
 }
 
 /*------------------------------------------------------------------------*/
@@ -350,7 +373,12 @@ static void cbasic_suite_init_failure_message_handler(const CU_pSuite pSuite)
   assert(NULL != pSuite->pName);
 
   if (CU_CBRM_SILENT != f_run_mode)
-    fprintf(stdout, _("\nWARNING - Suite initialization failed for '%s'."), pSuite->pName);
+  {
+    CU_CBASIC_SET_COLOUR(CU_CBRM_SKIP_COLOUR);
+    fprintf(stdout, _("\nWARNING"));
+    CU_CBASIC_SET_COLOUR(CU_CBRM_NORMAL_COLOUR);
+    fprintf(stdout, _(" - Suite initialization failed for '%s'."), pSuite->pName);
+  }
 }
 
 /*------------------------------------------------------------------------*/
@@ -363,7 +391,12 @@ static void cbasic_suite_cleanup_failure_message_handler(const CU_pSuite pSuite)
   assert(NULL != pSuite->pName);
 
   if (CU_CBRM_SILENT != f_run_mode)
-    fprintf(stdout, _("\nWARNING - Suite cleanup failed for '%s'."), pSuite->pName);
+  {
+    CU_CBASIC_SET_COLOUR(CU_CBRM_SKIP_COLOUR);
+    fprintf(stdout, _("\nWARNING"));
+    CU_CBASIC_SET_COLOUR(CU_CBRM_NORMAL_COLOUR);
+    fprintf(stdout, _(" - Suite cleanup failed for '%s'."), pSuite->pName);
+  }
 }
 
 /** @} */
