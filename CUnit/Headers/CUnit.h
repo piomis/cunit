@@ -54,7 +54,7 @@
 #include <math.h>
 
 /** CUnit version number. */
-#define CU_VERSION "@VERSION@-@RELEASE@"
+#define CU_VERSION "2.2.1"
 
 /*  Max string lengths for names (includes terminating NULL. */
 /** Maximum length of a test name string. */
@@ -101,7 +101,7 @@
 #  else
 #    define CU_EXPORT
 #  endif
-#  ifdef _MSC_VER
+#  if _MSC_VER < 1900
 #    define snprintf _snprintf
 #  endif
 #else

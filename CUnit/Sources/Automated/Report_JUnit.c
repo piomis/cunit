@@ -362,9 +362,8 @@ static void CU_report_JUnit_print_testcase_tag(const CU_pTest pTest, const CU_BO
   const char *pPackageName = CU_automated_package_name_get();
 
   /* Test tag */
-  fprintf(f_pTestResultFile, "    <testcase classname=\"%s.%s\" name=\"%s\" time=\"0\"%s>\n",
+  fprintf(f_pTestResultFile, "    <testcase classname=\"%s\" name=\"%s\" time=\"0\"%s>\n",
     pPackageName,
-    "",
     (NULL != pTest->pName) ? pTest->pName : "",
     (CU_TRUE == hasSubTags) ? "" : "/");
   }

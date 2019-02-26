@@ -44,7 +44,7 @@
 #include <assert.h>
 #include <string.h>
 
-//#define CBASIC_NO_ANSI (1)
+#define CBASIC_NO_ANSI (1)
 
 #ifdef CBASIC_NO_ANSI
 #include <windows.h>
@@ -58,10 +58,10 @@
 #include "CUnit_intl.h"
 
 #ifdef CBASIC_NO_ANSI
-#define CU_CBRM_FAIL_COLOUR      (0x0C)
-#define CU_CBRM_PASS_COLOUR      (0x0A)
+#define CU_CBRM_FAIL_COLOUR      (FOREGROUND_RED | FOREGROUND_INTENSITY)
+#define CU_CBRM_PASS_COLOUR      (FOREGROUND_GREEN | FOREGROUND_INTENSITY)
 #define CU_CBRM_NORMAL_COLOUR    (0x0F)
-#define CU_CBRM_SKIP_COLOUR      (0x0E)
+#define CU_CBRM_SKIP_COLOUR      (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY)
 #define CU_CBASIC_SET_COLOUR(_colour_)    SetConsoleTextAttribute(hConsole, (_colour_))
 #else
 #define CU_CBRM_FAIL_COLOUR       "\x1b[91m"
