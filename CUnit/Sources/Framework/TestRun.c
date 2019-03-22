@@ -994,6 +994,9 @@ static CU_ErrorCode run_single_test(CU_pTest pTest, CU_pRunSummary pRunSummary)
       }
     }
 
+    /* clear jmp_buf to not jump back to indless-loop for asserts failed during tear-down */
+    pTest->pJumpBuf = NULL;
+
     if (NULL != f_pCurSuite->pTearDownFunc) {
        (*f_pCurSuite->pTearDownFunc)();
     }
