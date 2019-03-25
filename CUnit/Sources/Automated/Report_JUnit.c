@@ -243,6 +243,7 @@ void CU_report_JUnit_suite_complete_msg_handler(const CU_pSuite pSuite, const CU
           if (CUF_TestInactive == pCurrFailure->type)
           {
             CU_report_JUnit_print_single_test_skipped(pTest);
+            pCurrFailure = pCurrFailure->pNext;
           }
           else
           {

@@ -185,6 +185,7 @@ static CU_ErrorCode cbasic_initialize(void)
 
 #ifdef CBASIC_NO_ANSI
   hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+  CU_CBASIC_SET_COLOUR(CU_CBRM_NORMAL_COLOUR);
 #endif
 
   CU_set_error(CUE_SUCCESS);

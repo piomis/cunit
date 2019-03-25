@@ -874,18 +874,9 @@ static CU_ErrorCode run_single_suite(CU_pSuite pSuite, CU_pRunSummary pRunSummar
     else {
       pTest = pSuite->pTest;
       while ((NULL != pTest) && ((CUE_SUCCESS == result) || (CU_get_error_action() == CUEA_IGNORE))) {
-        if (CU_FALSE != pTest->fActive) {
-          result2 = run_single_test(pTest, pRunSummary);
-          result = (CUE_SUCCESS == result) ? result2 : result;
-        }
-        else {
-          f_run_summary.nTestsInactive++;
-          if (CU_FALSE != f_failure_on_inactive) {
-            add_failure(&f_failure_list, &f_run_summary, CUF_TestInactive,
-                        0, _("Test inactive"), _("CUnit System"), pSuite, pTest);
-            result = CUE_TEST_INACTIVE;
-          }
-        }
+        result2 = run_single_test(pTest, pRunSummary);
+        result = (CUE_SUCCESS == result) ? result2 : result;
+
         pTest = pTest->pNext;
 
         if (CUE_SUCCESS == result) {
