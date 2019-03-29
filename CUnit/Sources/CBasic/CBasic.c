@@ -298,15 +298,24 @@ static void cbasic_test_complete_message_handler(const CU_pTest pTest,
 
   if (NULL == pFailure) {
     if (CU_CBRM_VERBOSE == f_run_mode) {
-      CU_CBASIC_SET_COLOUR(CU_CBRM_PASS_COLOUR);
-      fprintf(stdout, _("passed"));
-      CU_CBASIC_SET_COLOUR(CU_CBRM_NORMAL_COLOUR);
+        if (pTest->fActive == CU_TRUE)
+        {
+            CU_CBASIC_SET_COLOUR(CU_CBRM_PASS_COLOUR);
+            fprintf(stdout, _("passed"));
+            CU_CBASIC_SET_COLOUR(CU_CBRM_NORMAL_COLOUR);
+        }
+        else
+        {
+            CU_CBASIC_SET_COLOUR(CU_CBRM_SKIP_COLOUR);
+            fprintf(stdout, _("SKIPPED"));
+            CU_CBASIC_SET_COLOUR(CU_CBRM_NORMAL_COLOUR);
+        }
     }
   }
   else {
     switch (f_run_mode) {
       case CU_CBRM_VERBOSE:
-        if (CUF_TestInactive == pFailure->type)
+        if (CUF_TestInactive == pFailure->type )
         {
           CU_CBASIC_SET_COLOUR(CU_CBRM_SKIP_COLOUR);
           fprintf(stdout, _("SKIPPED"));
