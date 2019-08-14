@@ -867,13 +867,18 @@ static CU_ErrorCode run_single_suite(CU_pSuite pSuite, CU_pRunSummary pRunSummar
       add_failure(&f_failure_list, &f_run_summary, CUF_SuiteInitFailed, 0,
                   _("Suite Initialization failed - Suite Skipped"),
                   _("CUnit System"), pSuite, NULL);
+      /* Increment number of failed test */
+      pSuite->uiNumberOfTestsFailed++;
+
       result = CUE_SINIT_FAILED;
     }
 
     /* reach here if no suite initialization, or if it succeeded */
     else {
       pTest = pSuite->pTest;
-      while ((NULL != pTest) && ((CUE_SUCCESS == result) || (CU_get_error_action() == CUEA_IGNORE))) {
+      while ((NULL != pTest) && ((CUE_SUCCESS == result) || (CU_get_error_action() == CUEA_IGNORE)))
+      {
+        unsigned int numberOfFailureBeforeTest = pRunSummary->nFailureRecords;
         result2 = run_single_test(pTest, pRunSummary);
         result = (CUE_SUCCESS == result) ? result2 : result;
 
@@ -882,8 +887,15 @@ static CU_ErrorCode run_single_suite(CU_pSuite pSuite, CU_pRunSummary pRunSummar
         if (CUE_SUCCESS == result) {
           pSuite->uiNumberOfTestsSuccess++;
         }
+        /*
         else {
           pSuite->uiNumberOfTestsFailed++;
+        }*/
+
+        /* New failures reported, increment number of failed tests */
+        if ((result2 != CUE_TEST_INACTIVE) && (pRunSummary->nFailureRecords > numberOfFailureBeforeTest))
+        {
+            pSuite->uiNumberOfTestsFailed++;
         }
       }
       pRunSummary->nSuitesRun++;
@@ -896,6 +908,9 @@ static CU_ErrorCode run_single_suite(CU_pSuite pSuite, CU_pRunSummary pRunSummar
         pRunSummary->nSuitesFailed++;
         add_failure(&f_failure_list, &f_run_summary, CUF_SuiteCleanupFailed,
                     0, _("Suite cleanup failed."), _("CUnit System"), pSuite, NULL);
+        /* Increment number of failed test */
+        pSuite->uiNumberOfTestsFailed++;
+
         result = (CUE_SUCCESS == result) ? CUE_SCLEAN_FAILED : result;
       }
     }

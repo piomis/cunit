@@ -121,8 +121,6 @@ void CU_report_JUnit_set_output_filename(const char* szFilename)
 
 CU_ErrorCode CU_report_JUnit_open_report(void)
 {
-  CU_pRunSummary pRunSummary = CU_get_run_summary();
-
   /* if a filename root hasn't been set, use the default one */
   if (0 == strlen(f_szTestResultFileName)) {
     CU_set_output_filename(f_szDefaultFileRoot);
@@ -142,9 +140,7 @@ CU_ErrorCode CU_report_JUnit_open_report(void)
 
     fprintf(f_pTestResultFile,
       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-      "<testsuites errors=\"0\" failures=\"%d\" tests=\"%d\" name=\"\"> \n",
-      pRunSummary->nTestsFailed,
-      pRunSummary->nTestsRun);
+      "<testsuites> \n");
   }
 
   return CU_get_error();
@@ -195,9 +191,13 @@ void CU_report_JUnit_suite_complete_msg_handler(const CU_pSuite pSuite, const CU
   CU_pTest pTest;
   CU_pFailureRecord pCurrFailure;
 
+  const char *pPackageName;
+
   assert(NULL != pSuite);
   assert(NULL != pSuite->pName);
   assert(NULL != f_pTestResultFile);
+
+  pPackageName = CU_automated_package_name_get();
 
   /* translate suite name that may contain XML control characters */
   szTempName = (char *)CU_MALLOC((szTempName_len = CU_translated_strlen(pSuite->pName) + 1));
@@ -206,11 +206,12 @@ void CU_report_JUnit_suite_complete_msg_handler(const CU_pSuite pSuite, const CU
   /* Print suite open tag */
   fprintf(f_pTestResultFile,
     /*"  <testsuite errors=\"%d\" failures=\"%d\" tests=\"%d\" name=\"%s\"> \n",*/
-    "  <testsuite tests=\"%d\" name=\"%s\"> \n",
+    "  <testsuite tests=\"%d\" failures=\"%d\" errors=\"0\" time=\"0\" name=\"%s\" package=\"%s\" hostname=\"localhost\" timestamp=\"0\"> \n",
     //0, /* Errors */
-    //pSuite->uiNumberOfTestsFailed, /* Failures */
     pSuite->uiNumberOfTests, /* Tests */
-    (NULL != szTempName) ? szTempName : ""); /* Name */
+    pSuite->uiNumberOfTestsFailed, /* Failures */
+    (NULL != szTempName) ? szTempName : "", /* Name */
+    pPackageName); /* Package */
 
   if (pFailure != NULL)
   {
