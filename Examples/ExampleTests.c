@@ -196,6 +196,23 @@ static void testAssertNStringNotEqual(void)
   CU_ASSERT_NSTRING_NOT_EQUAL(str2, str3, 2);
 }
 
+static void testAssertMemoryEqual(void)
+{
+    char mem1[] = { (char)0, (char)1, (char)2, (char)3 };
+    char mem2[] = { (char)0, (char)1, (char)2, (char)3, (char)4, (char)5 };
+
+    CU_ASSERT_MEMORY_EQUAL(mem1, mem2, sizeof(mem1));
+    CU_ASSERT_MEMORY_EQUAL(mem1, mem1, sizeof(mem1));
+}
+
+static void testAssertMemoryNotEqual(void)
+{
+    char mem1[] = { (char)0, (char)1, (char)2, (char)3 };
+    char mem2[] = { (char)0, (char)6, (char)2, (char)3, (char)4, (char)5 };
+
+    CU_ASSERT_MEMORY_NOT_EQUAL(mem1, mem2, sizeof(mem1));
+}
+
 static void testAssertDoubleEqual(void)
 {
   CU_ASSERT_DOUBLE_EQUAL(10, 10.0001, 0.0001);
@@ -307,6 +324,12 @@ static CU_TestInfo tests_nstring[] = {
 	CU_TEST_INFO_NULL,
 };
 
+static CU_TestInfo tests_memory[] = {
+  { "testAssertMemoryEqual", testAssertMemoryEqual },
+  { "testAssertMemoryNotEqual", testAssertMemoryNotEqual },
+    CU_TEST_INFO_NULL,
+};
+
 static CU_TestInfo tests_double[] = {
   { "testAssertDoubleEqual", testAssertDoubleEqual },
   { "testAssertDoubleNotEqual", testAssertDoubleNotEqual },
@@ -333,6 +356,7 @@ static CU_SuiteInfo suites[] = {
   { "TestNullnessAssert",  NULL,               NULL,                NULL, NULL, tests_null},
   { "TestStringAssert",    NULL,               NULL,                NULL, NULL, tests_string},
   { "TestNStringAssert",   NULL,               NULL,                NULL, NULL, tests_nstring},
+  { "TestMemoryAssert",    NULL,               NULL,                NULL, NULL, tests_memory},
   { "TestDoubleAssert",    NULL,               NULL,                NULL, NULL, tests_double},
   { "TestFatal",           NULL,               NULL,                NULL, NULL, tests_fatal},
 	CU_SUITE_INFO_NULL,

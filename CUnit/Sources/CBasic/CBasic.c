@@ -44,7 +44,7 @@
 #include <assert.h>
 #include <string.h>
 
-#define CBASIC_NO_ANSI (1)
+#define CBASIC_NO_ANSI (0)
 
 #ifdef CBASIC_NO_ANSI
 #include <windows.h>

@@ -294,7 +294,35 @@
  *  Reports failure and causes test to abort.
  */
 #define CU_ASSERT_NSTRING_NOT_EQUAL_FATAL(actual, expected, count) \
-  { CU_assertImplementation((strncmp((const char*)(actual), (const char*)(expected), (size_t)(count))), __LINE__, ("CU_ASSERT_NSTRING_NOT_EQUAL_FATAL(" #actual ","  #expected "," #count ")"), __FILE__, "", CU_TRUE); }
+  { CU_assertImplementation((memcmp((const char*)(actual), (const char*)(expected), (size_t)(count))), __LINE__, ("CU_ASSERT_NSTRING_NOT_EQUAL_FATAL(" #actual ","  #expected "," #count ")"), __FILE__, "", CU_TRUE); }
+
+ /** Asserts that memory content content actual == expected with length specified.
+  *  The comparison is limited to count bytes.
+  *  Reports failure with no other action.
+  */
+#define CU_ASSERT_MEMORY_EQUAL(actual, expected, count) \
+  { CU_assertImplementation(!(memcmp((const char*)(actual), (const char*)(expected), (size_t)(count))), __LINE__, ("CU_ASSERT_MEMORY_EQUAL(" #actual ","  #expected "," #count ")"), __FILE__, "", CU_FALSE); }
+
+  /** Asserts that memory content actual == expected with length specified.
+   *  The comparison is limited to count bytes.
+   *  Reports failure and causes test to abort.
+   */
+#define CU_ASSERT_MEMORY_EQUAL_FATAL(actual, expected, count) \
+  { CU_assertImplementation(!(memcmp((const char*)(actual), (const char*)(expected), (size_t)(count))), __LINE__, ("CU_ASSERT_MEMORY_EQUAL_FATAL(" #actual ","  #expected "," #count ")"), __FILE__, "", CU_TRUE); }
+
+   /** Asserts that memory content actual != expected with length specified.
+    *  The comparison is limited to count bytes.
+    *  Reports failure with no other action.
+    */
+#define CU_ASSERT_MEMORY_NOT_EQUAL(actual, expected, count) \
+  { CU_assertImplementation((memcmp((const void*)(actual), (const void*)(expected), (size_t)(count))), __LINE__, ("CU_ASSERT_MEMORY_NOT_EQUAL(" #actual ","  #expected "," #count ")"), __FILE__, "", CU_FALSE); }
+
+    /** Asserts that memory content actual != expected with length specified.
+     *  The comparison is limited to count bytes.
+     *  Reports failure and causes test to abort.
+     */
+#define CU_ASSERT_MEMORY_NOT_EQUAL_FATAL(actual, expected, count) \
+  { CU_assertImplementation((memcmp((const char*)(actual), (const char*)(expected), (size_t)(count))), __LINE__, ("CU_ASSERT_MEMORY_NOT_EQUAL_FATAL(" #actual ","  #expected "," #count ")"), __FILE__, "", CU_TRUE); }
 
 /** Asserts that double actual == expected within the specified tolerance.
  *  If actual is within granularity of expected, the assertion passes.
