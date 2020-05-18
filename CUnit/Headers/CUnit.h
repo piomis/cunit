@@ -294,7 +294,7 @@
  *  Reports failure and causes test to abort.
  */
 #define CU_ASSERT_NSTRING_NOT_EQUAL_FATAL(actual, expected, count) \
-  { CU_assertImplementation((memcmp((const char*)(actual), (const char*)(expected), (size_t)(count))), __LINE__, ("CU_ASSERT_NSTRING_NOT_EQUAL_FATAL(" #actual ","  #expected "," #count ")"), __FILE__, "", CU_TRUE); }
+  { CU_assertImplementation((strncmp((const char*)(actual), (const char*)(expected), (size_t)(count))), __LINE__, ("CU_ASSERT_NSTRING_NOT_EQUAL_FATAL(" #actual ","  #expected "," #count ")"), __FILE__, "", CU_TRUE); }
 
  /** Asserts that memory content content actual == expected with length specified.
   *  The comparison is limited to count bytes.
