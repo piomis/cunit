@@ -10,7 +10,7 @@
     <description>CUnit framework library</description>
   </metadata>
   <files>
-     <file src="lib\*"/>
-     <file src="CUnit\Headers\*"/>
+     <file src="lib\*" target="lib"/>
+     <file src="CUnit\Headers\*" target="CUnit\Headers"/>
   </files>
 </package>
