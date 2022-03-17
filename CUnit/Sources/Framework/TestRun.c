@@ -1689,7 +1689,7 @@ static void test_CU_fail_on_inactive(void)
   CU_set_test_active(pTest4, CU_FALSE);
   CU_set_fail_on_inactive(CU_TRUE);
   TEST(CUE_TEST_INACTIVE == CU_run_all_tests());    /* all tests inactive */
-  test_results(1,1,0,0,0,2,0,0,0,3);
+  test_results(1,1,0,0,2,2,0,0,0,3);
   CU_set_fail_on_inactive(CU_FALSE);
   TEST(CUE_SINIT_FAILED == CU_run_all_tests());
   test_results(1,1,0,0,0,2,0,0,0,1);

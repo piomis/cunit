@@ -56,46 +56,46 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\CUnit\Headers\Automated.h">
+    <ClInclude Include="../CUnit/Headers\Automated.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\CUnit\Headers\Basic.h">
+    <ClInclude Include="../CUnit/Headers\Basic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\CUnit\Headers\Console.h">
+    <ClInclude Include="../CUnit/Headers\CBasic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\CUnit\Headers\CUCurses.h">
+    <ClInclude Include="../CUnit/Headers\Console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\CUnit\Headers\CUError.h">
+    <ClInclude Include="../CUnit/Headers\CUCurses.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\CUnit\Headers\CUnit.h">
+    <ClInclude Include="../CUnit/Headers\CUError.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\CUnit\Headers\CUnit_intl.h">
+    <ClInclude Include="../CUnit/Headers\CUnit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\CUnit\Headers\MyMem.h">
+    <ClInclude Include="../CUnit/Headers\CUnit_intl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\CUnit\Headers\TestDB.h">
+    <ClInclude Include="../CUnit/Headers\MyMem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\CUnit\Headers\TestRun.h">
+    <ClInclude Include="../CUnit/Headers\Report_CUnit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\CUnit\Headers\Util.h">
+    <ClInclude Include="../CUnit/Headers\Report_JUnit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\CUnit\Headers\Report_CUnit.h">
+    <ClInclude Include="../CUnit/Headers\TestDB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\CUnit\Headers\Report_JUnit.h">
+    <ClInclude Include="../CUnit/Headers\TestRun.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\CUnit\Headers\CBasic.h">
+    <ClInclude Include="../CUnit/Headers\Util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
