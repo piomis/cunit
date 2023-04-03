@@ -138,24 +138,24 @@
     <_ProjectFileVersion>15.0.28127.55</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Static Lib|Win32'">
-    <OutDir>Debug - Static Lib\x86\</OutDir>
+    <OutDir>$(ProjectDir)..\lib\windows\x86/</OutDir>
     <IntermediateOutputPath>Debug - Static Lib\x86\</IntermediateOutputPath>
     <IntDir>$(IntermediateOutputPath)</IntDir>
     <TargetName>libcunit</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Static Lib|x64'">
-    <OutDir>Debug - Static Lib\$(Platform)\</OutDir>
+    <OutDir>$(ProjectDir)..\lib\windows\x64</OutDir>
     <IntermediateOutputPath>Debug - Static Lib\$(Platform)\</IntermediateOutputPath>
     <IntDir>$(IntermediateOutputPath)</IntDir>
     <TargetName>libcunit</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LinuxDebug|x86'">
-    <OutDir>$(ProjectDir)LinuxDebug/x86/</OutDir>
+    <OutDir>$(ProjectDir)../lib/linux/x86/</OutDir>
     <IntDir>$(ProjectDir)LinuxDebug/x86/</IntDir>
     <TargetName>libcunit</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LinuxDebug|x64'">
-    <OutDir>$(ProjectDir)LinuxDebug/x64/</OutDir>
+    <OutDir>$(ProjectDir)../lib/linux/x64/</OutDir>
     <IntDir>$(ProjectDir)LinuxDebug/x64/</IntDir>
     <TargetName>libcunit</TargetName>
   </PropertyGroup>

@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <LLVMInstallDir>C:\_HID\Programs\Compilers\LLVM</LLVMInstallDir>
+    <LLVMToolsVersion>13.0.0</LLVMToolsVersion>
+  </PropertyGroup>
+</Project>
